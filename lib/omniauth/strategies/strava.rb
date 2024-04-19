@@ -10,7 +10,6 @@ module OmniAuth
         :authorize_url => 'https://www.strava.com/oauth/authorize',
         :token_url => 'https://www.strava.com/oauth/token'
       }
-      option :scope, 'read'
 
       def authorize_params
         super.tap do |params|
@@ -24,6 +23,13 @@ module OmniAuth
 
       def callback_phase
         super
+      end
+
+      def token_params
+        super.tap do |params|
+          params[:client_id] = options[:client_id]
+          params[:client_secret] = options[:client_secret]
+        end
       end
 
       uid { "#{athlete['id']}" }
@@ -43,8 +49,7 @@ module OmniAuth
           first_name: athlete['firstname'],
           last_name: athlete['lastname'],
           email: athlete['email'],
-          location: "#{athlete['city']} #{athlete['state']}",
-          image: athlete['profile']
+          location: "#{athlete['city']} #{athlete['state']}"
         }
       end
 
